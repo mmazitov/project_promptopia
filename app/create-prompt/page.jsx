@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
 import Form from "@components/Form";
 
-const CreatePrompt = () => {
+const CreatePrompt = ({ onPostCreated }) => {
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -28,6 +27,7 @@ const CreatePrompt = () => {
       });
 
       if (response.ok) {
+        onPostCreated(); // Notify parent to update posts
         router.push("/");
       }
     } catch (error) {

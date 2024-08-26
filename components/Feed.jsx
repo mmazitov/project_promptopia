@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import PromptCard from './PromptCard';
 
 const PromptCardList = ({ data, handleTagClick }) => {
@@ -14,8 +14,8 @@ const PromptCardList = ({ data, handleTagClick }) => {
         />
       ))}
     </div>
-  )
-}
+  );
+};
 
 const Feed = () => {
   const [searchText, setSearchText] = useState('');
@@ -23,18 +23,19 @@ const Feed = () => {
   const [searchedResults, setSearchedResults] = useState([]);
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch('/api/prompt');
-      const data = await response.json();
+  // Fetch posts initially and when needed
+  const fetchPosts = async () => {
+    const response = await fetch('/api/prompt');
+    const data = await response.json();
+    setPosts(data);
+  };
 
-      setPosts(data);
-    }
+  useEffect(() => {
     fetchPosts();
-  }), [];
+  }, []); // This only runs once when the component mounts
 
   const filterPrompts = (searchtext) => {
-    const regex = new RegExp(searchtext, "i"); // 'i' flag for case-insensitive search
+    const regex = new RegExp(searchtext, "i");
     return posts.filter(
       (item) =>
         regex.test(item.creator.username) ||
@@ -47,7 +48,6 @@ const Feed = () => {
     clearTimeout(searchTimeout);
     setSearchText(e.target.value);
 
-    // debounce method
     setSearchTimeout(
       setTimeout(() => {
         const searchResult = filterPrompts(e.target.value);
@@ -61,6 +61,11 @@ const Feed = () => {
 
     const searchResult = filterPrompts(tagName);
     setSearchedResults(searchResult);
+  };
+
+  // Add a function to be called after creating a new post
+  const handleNewPost = () => {
+    fetchPosts(); // Refresh the list of posts
   };
 
   return (
@@ -86,7 +91,7 @@ const Feed = () => {
         <PromptCardList data={posts} handleTagClick={handleTagClick} />
       )}
     </section>
-  )
-}
+  );
+};
 
-export default Feed
+export default Feed;
